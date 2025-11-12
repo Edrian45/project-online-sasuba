@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PCF Management System</title>
+    <link rel="shortcut icon" href="logo/cash-flow-icon_933463-5038.ico" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-info">
+            <h1>Personal Cash Flaw Management System</h1>
+            <div class="muted">Track Inflows, Outflows & Daily Savings — Timestamps & Edit Tracking Included</div>
+        </div>
+        <div class="no-print">
+            <button id="btn-notifications" class="btn-primary" style="display:none">
+                🔔 Notifications
+                <span id="notification-count" class="notification-badge" style="display:none">0</span>
+            </button>
+            <button id="btn-logout" class="btn-primary mt-2" style="display:none">Logout</button>
+        </div>
+    </header>
+    <div class="container">
+        <main id="app">
+            <!-- LOGIN / REGISTER -->
+            <div class="form">
+                <section id="auth" class="card" style="margin-top:1rem">
+                    <div id="auth-forms">
+                        <div id="login-form">
+                            <h3>Login to Your Account</h3>
+                            <label for="login-email">Email</label>
+                            <input id="login-email" type="email" required />
+
+                            <label for="login-pin">PIN / Password</label>
+                            <input id="login-pin" type="password" />
+
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="remember-me" />
+                                <label for="remember-me" class="checkbox-label">Remember me</label>
+                            </div>
+                            <button id="btn-forgot-pin" class="btn-secondary">Forgot PIN/Password?</button>
+                            <div class="flex gap-2 mt-3">
+                                <button id="btn-login" class="btn-secondary">Login</button>
+                                <button id="btn-show-register" class="btn-secondary">Register</button>
+                            </div>
+                        </div>
+
+                        <div id="register-form" style="display:none">
+                            <h3>Create New Account</h3>
+                            <label for="reg-name">Full name</label>
+                            <input id="reg-name" type="text" placeholder="Lastname, Firstname" />
+                            <label for="reg-email">Email (this identifies your account)</label>
+                            <input id="reg-email" type="email" placeholder="your@school.edu" />
+                            <label for="reg-pin">PIN / Password</label>
+                            <input id="reg-pin" type="password" placeholder="4-12 char PIN" />
+                            <div id="password-strength" class="mt-2" style="display:none;font-size:0.75rem;"></div>
+                            <div class="flex gap-2 mt-3">
+                                <button id="btn-register" class="btn-primary">Create account</button>
+                                <button id="btn-show-login" class="btn-secondary">Back to login</button>
+                            </div>
+                            <div class="muted mt-2" style="font-size:0.75rem">Note: This demo stores data locally in
+                                your browser (localStorage). For real security, a server and hashed passwords are
+                                required.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" style="display:none;margin-top:1rem">
+                <!-- User Info and Quick Actions -->
+                <div class="card">
+                    <div class="flex justify-between items-center mobile-column">
+                        <div class="user-info">
+                            <div class="muted">Welcome back</div>
+                            <div id="u-name" style="font-weight:700; font-size:1.25rem"></div>
+                            <div id="u-email" class="muted"></div>
+                        </div>
+                        <div class="flex gap-2 no-print mobile-actions">
+                            <button id="btn-add-trans" class="btn-primary">+ Add Transaction</button>
+                            <button id="btn-print" class="btn-primary">Print</button>
+                            <button id="btn-edit-profile" class="btn-primary">Profile</button>
+                            <button id="btn-settings" class="btn-primary">Settings</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Left Column - Financial Overview -->
+                    <div class="dashboard-main">
+                        <!-- Key Statistics -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-label">Total Inflow</div>
+                                <div id="stat-inflow" class="stat-value">₱0.00</div>
+                                <div class="muted">Selected period</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Total Outflow</div>
+                                <div id="stat-outflow" class="stat-value">₱0.00</div>
+                                <div class="muted">Selected period</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Net Savings</div>
+                                <div id="stat-savings" class="stat-value">₱0.00</div>
+                                <div class="muted">Selected period</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Transactions</div>
+                                <div id="stat-count" class="stat-value">0</div>
+                                <div class="muted">Selected period</div>
+                            </div>
+                        </div>
+
+                        <!-- Savings Insights -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Savings Insights</h3>
+                                <div class="card-actions">
+                                    <button id="btn-set-goal" class="btn-secondary btn-small">Set Goal</button>
+                                </div>
+                            </div>
+                            <div class="insights-grid">
+                                <div class="insight-card">
+                                    <h4>Weekly Savings</h4>
+                                    <div id="weekly-savings" class="insight-value">₱0.00</div>
+                                    <div id="weekly-comparison" class="muted">vs last week: 0%</div>
+                                </div>
+                                <div class="insight-card">
+                                    <h4>30-Day Projection</h4>
+                                    <div id="monthly-projection" class="insight-value">₱0.00</div>
+                                    <div class="muted">If you maintain this rate</div>
+                                </div>
+                                <div class="insight-card">
+                                    <h4>Goal Progress</h4>
+                                    <div id="goal-progress-text" class="muted">No goal set</div>
+                                    <div class="goal-progress">
+                                        <div class="progress-bar">
+                                            <div id="goal-progress-fill" class="progress-fill" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Monthly Savings Chart -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Monthly Savings Trend</h3>
+                            </div>
+                            <canvas id="weeklySavingsChart" style="max-height:300px"></canvas>
+                        </div>
+
+                        <!-- Transactions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Recent Transactions</h3>
+                                <div class="card-actions">
+                                    <select id="view-type" class="w-auto">
+                                        <option value="all">All</option>
+                                        <option value="inflow">Inflows</option>
+                                        <option value="outflow">Outflows</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 mb-3">
+                                <input id="search" placeholder="Search notes or amount" class="w-full" />
+                            </div>
+                            <div id="transactions" class="trans-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Analytics & Tools -->
+                    <div class="dashboard-sidebar">
+
+                        <!-- Financial Self-Control -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Financial Awareness</h3>
+                            </div>
+                            <div id="spending-limit-warnings"></div>
+                            <div class="reflection-notes">
+                                <label for="reflection-notes">Today's Reflection</label>
+                                <textarea id="reflection-notes" class="reflection-textarea"
+                                    placeholder="How did your spending align with your goals today? What would you do differently tomorrow?"></textarea>
+                                <button id="btn-save-reflection" class="btn-secondary mt-2">Save Reflection</button>
+
+                                <!-- Add this section to display saved reflections -->
+                                <div id="reflections-list" class="mt-4" style="display: none;">
+                                    <h4>Previous Reflections</h4>
+                                    <div id="reflections-container"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date Filter -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Filter Period</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="filter-start">Start date</label>
+                                    <input type="date" id="filter-start" />
+                                </div>
+                                <div class="col">
+                                    <label for="filter-end">End date</label>
+                                    <input type="date" id="filter-end" />
+                                </div>
+                            </div>
+                            <div class="flex gap-2 mt-3">
+                                <button id="btn-apply-filter" class="btn-primary">Apply</button>
+                                <button id="btn-clear-filter" class="btn-secondary">Clear</button>
+                            </div>
+                        </div>
+
+                        <!-- Daily Summary -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Daily Summary</h3>
+                            </div>
+                            <div id="daily-summary" class="mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODALS (same as before) -->
+            <!-- MODAL ADD/EDIT -->
+            <div id="modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modal-title">Add transaction</h3>
+                        <button id="btn-close-modal" class="modal-close">&times;</button>
+                    </div>
+                    <div>
+                        <label for="trans-type">Type</label>
+                        <select id="trans-type">
+                            <option value="inflow">Cash Inflow</option>
+                            <option value="outflow">Cash Outflow</option>
+                        </select>
+                        <label for="trans-amount">Amount (PHP)</label>
+                        <input id="trans-amount" type="number" step="0.01" min="0.01" />
+                        <label for="trans-note">Note / Description</label>
+                        <textarea id="trans-note" rows="3"></textarea>
+                        <div class="flex gap-2 mt-3">
+                            <button id="btn-save-trans" class="btn-primary">Save</button>
+                            <button id="btn-cancel-trans" class="btn-secondary">Cancel</button>
+                        </div>
+                        <div id="edit-meta" class="mt-2" style="font-size:0.75rem;color:var(--text-muted);display:none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL EDIT PROFILE -->
+            <div id="profile-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="profile-modal-title">Edit Profile</h3>
+                        <button id="close-profile-modal" class="modal-close">&times;</button>
+                    </div>
+                    <div>
+                        <label for="edit-name">Full Name</label>
+                        <input id="edit-name" type="text" placeholder="Your full name" />
+
+                        <label for="edit-pin">New PIN / Password (optional)</label>
+                        <input id="edit-pin" type="password" placeholder="Leave blank to keep current PIN" />
+                        <div class="muted mt-2" style="font-size:0.75rem">PIN must be 4-12 digits.</div>
+
+                        <div class="flex gap-2 mt-3">
+                            <button id="save-profile" class="btn-primary">Save Changes</button>
+                            <button id="cancel-profile" class="btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL SETTINGS -->
+            <div id="settings-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="settings-modal-title">Settings</h3>
+                        <button id="close-settings-modal" class="modal-close">&times;</button>
+                    </div>
+                    <div>
+                        <div class="settings-section">
+                            <h4>Savings Goal</h4>
+                            <label for="savings-goal-amount">Monthly Savings Target (₱)</label>
+                            <input id="savings-goal-amount" type="number" min="0" step="0.01" />
+                            <div class="muted mt-1" style="font-size:0.75rem">Set a monthly savings goal to track your
+                                progress.</div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h4>Spending Limits</h4>
+                            <label for="daily-spending-limit">Daily Spending Limit (₱)</label>
+                            <input id="daily-spending-limit" type="number" min="0" step="0.01" />
+                            <label for="weekly-spending-limit" class="mt-2">Weekly Spending Limit (₱)</label>
+                            <input id="weekly-spending-limit" type="number" min="0" step="0.01" />
+                            <div class="muted mt-1" style="font-size:0.75rem">Get notifications when approaching these
+                                limits.</div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h4>Reminders</h4>
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="daily-reminder" />
+                                <label for="daily-reminder" class="checkbox-label">Enable daily reminder to log
+                                    transactions</label>
+                            </div>
+                            <div class="checkbox-container mt-2">
+                                <input type="checkbox" id="weekly-report" />
+                                <label for="weekly-report" class="checkbox-label">Send weekly spending summary</label>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 mt-3">
+                            <button id="save-settings" class="btn-primary">Save Settings</button>
+                            <button id="cancel-settings" class="btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL NOTIFICATIONS -->
+            <div id="notifications-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="notifications-modal-title">Notifications</h3>
+                        <button id="close-notifications-modal" class="modal-close">&times;</button>
+                    </div>
+                    <div id="notifications-list">
+                        <!-- Notifications will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="muted mt-4 text-center">System generated timestamps — date format mm/dd/yy — time 24-hour
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

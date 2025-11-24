@@ -1880,7 +1880,7 @@ function printReport(reportType = null) {
     w.document.write(`
         <html>
             <head>
-                <title>Student Cash Management System - Report</title>
+                <title>Personal Cash Flaw Management System - Report</title>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width,initial-scale=1"/>
                 <style>
@@ -2050,3 +2050,4 @@ function initApp() {
 // Start the application when DOM is loaded
 
 document.addEventListener('DOMContentLoaded', initApp);
+

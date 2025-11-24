@@ -1764,7 +1764,7 @@ function printReport(reportType = null) {
     });
 
     // Prepare printable content
-    let html = '<h2>Student Cash Management System - Report</h2>';
+    let html = '<h2>Personal Cash Flaw Management System - Report</h2>';
     const session = getSession();
     const timestamp = nowTimestamp();
 
@@ -2048,4 +2048,5 @@ function initApp() {
 }
 
 // Start the application when DOM is loaded
+
 document.addEventListener('DOMContentLoaded', initApp);
